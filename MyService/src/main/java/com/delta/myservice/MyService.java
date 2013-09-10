@@ -65,6 +65,7 @@ public class MyService extends Service {
         *
         * - Obtain the Message object from the service handler
         * - Assign the startID to the Message's first argument
+        * - send the message which you created in step one
         * */
 
         // If we get killed, after returning from here, restart
