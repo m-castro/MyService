@@ -16,6 +16,7 @@ public class MyService extends Service {
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
 
+
     // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
@@ -23,6 +24,7 @@ public class MyService extends Service {
         }
         @Override
         public void handleMessage(Message msg) {
+
             // Normally we would do some work here, like download a file.
             // For our sample, we just sleep for 5 seconds.
             long endTime = System.currentTimeMillis() + 5*1000;
@@ -37,6 +39,7 @@ public class MyService extends Service {
             // Stop the service using the startId, so that we don't stop
             // the service in the middle of handling another job
             stopSelf(msg.arg1);
+
         }
     }
 
@@ -54,6 +57,15 @@ public class MyService extends Service {
          * - Use the Looper from the previous step to get a new ServiceHandler
          * - You will need the ServiceHandler from the previous step in other functions!
          * */
+
+        HandlerThread myThread = new HandlerThread("Whatever", Thread.MIN_PRIORITY);
+        myThread.start();
+
+        mServiceLooper = myThread.getLooper();
+
+        mServiceHandler = new ServiceHandler(mServiceLooper);
+
+
     }
 
     @Override
@@ -65,8 +77,12 @@ public class MyService extends Service {
         *
         * - Obtain the Message object from the service handler
         * - Assign the startID to the Message's first argument
-        * - send the message which you created in step one
+        * - Send the message
         * */
+
+        Message message = mServiceHandler.obtainMessage();
+        message.arg1 = startId;
+        mServiceHandler.sendMessage(message);
 
         // If we get killed, after returning from here, restart
         return START_STICKY;
